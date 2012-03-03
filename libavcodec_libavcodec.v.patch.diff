@@ -1,0 +1,18 @@
+--- a/cmake/patches/libavcodec_libavcodec.v.patch	2011-12-15 03:09:11.000000000 -0800
++++ b/cmake/patches/libavcodec_libavcodec.v.patch	2012-03-02 22:21:36.000000000 -0800
+@@ -1,11 +1,12 @@
+ --- ../ffmpeg-0.9/libavcodec/libavcodec.v	2011-12-14 15:00:29 +0000
+ +++ libavcodec/libavcodec.v	2011-12-14 15:00:28 +0000
+-@@ -25,5 +25,8 @@
++@@ -25,5 +25,9 @@
+                  ff_mmxext_idct;
+                  ff_idct_xvid*;
+                  ff_jpeg_fdct*;
+ +                ff_h264_info;
+-+				ff_golomb_vlc_len;
+-+				ff_ue_golomb_vlc_code;
+++                ff_golomb_vlc_len;
+++                ff_se_golomb_vlc_code;
+++                ff_ue_golomb_vlc_code;
+          local:  *;
+  };
