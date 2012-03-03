@@ -1,0 +1,12 @@
+--- ../ffmpeg-0.9/libavcodec/libavcodec.v	2011-12-14 15:00:29 +0000
++++ libavcodec/libavcodec.v	2011-12-14 15:00:28 +0000
+@@ -25,5 +25,9 @@
+                 ff_mmxext_idct;
+                 ff_idct_xvid*;
+                 ff_jpeg_fdct*;
++                ff_h264_info;
++                ff_golomb_vlc_len;
++                ff_se_golomb_vlc_code;
++                ff_ue_golomb_vlc_code;
+         local:  *;
+ };
