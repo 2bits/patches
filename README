@@ -1,0 +1,10 @@
+A collection of patches for Open Source Software helps to keep
+all the fixes together, visible, and verifiable.
+
+There are often times when patches can easily live in a gist,
+but now and then the source code contains mixed line endings.
+Because web browsers filter those out, the patch will fail.
+
+Here they can be uploaded directly, skipping the paste.
+Enjoy!
+
