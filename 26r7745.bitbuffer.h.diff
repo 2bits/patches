@@ -1,0 +1,11 @@
+--- a/avidemux_plugins/ADM_audioEncoders/twolame/ADM_libtwolame/bitbuffer.h	2010-05-16 10:16:23.000000000 -0700
++++ b/avidemux_plugins/ADM_audioEncoders/twolame/ADM_libtwolame/bitbuffer.h	2012-02-28 02:57:52.000000000 -0800
+@@ -40,7 +40,7 @@
+ //void buffer_deinit( bit_stream ** bs );
+ 
+ void buffer_put1bit (bit_stream *, int);
+-inline void buffer_putbits (bit_stream *, unsigned int, int);
++void buffer_putbits (bit_stream *, unsigned int, int);
+ unsigned long buffer_sstell (bit_stream *);
+ 
+ #endif
