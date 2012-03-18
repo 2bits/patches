@@ -593,39 +593,6 @@
                                          ADM_assert(0);
                                  }
                                  *abs=_oldPesStart;
---- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer.cpp	2010-08-15 00:31:54.000000000 -0700
-+++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer.cpp	2012-03-17 14:15:48.000000000 -0700
-@@ -275,7 +275,7 @@
-         err*=100;
-         err/=run.imageFPS*2;
-         if(err<0) err=-err;
--        printf("%lu :%lu / %lu , %f\n",run.imageFPS,run.imageFPS*2,compfps,err);
-+        printf("%u :%u / %u , %f\n",run.imageFPS,run.imageFPS*2,compfps,err);
- 
-         if(err<10) 
-         {
-@@ -318,9 +318,9 @@
-         delete work;  
- 
-         printf("*********Indexing stopped***********\n");
--        printf("Found       :%lu gop\n",run.nbGop);
--        printf("Found       :%lu image\n",run.nbImage);                
--        printf("Average fps :%lu /1000 fps\n",compfps);
-+        printf("Found       :%u gop\n",run.nbGop);
-+        printf("Found       :%u image\n",run.nbImage);                
-+        printf("Average fps :%u /1000 fps\n",compfps);
- 
-           delete demuxer;
-           delete [] realname;
-@@ -350,7 +350,7 @@
-         PRINT(last,l);
-         
- #endif
--        printf("Time difference:%lu s\n",result/1000);
-+        printf("Time difference:%u s\n",result/1000);
-         return result;
- 
- }
 --- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer_mpeg2.cpp	2008-09-13 09:27:58.000000000 -0700
 +++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer_mpeg2.cpp	2012-03-17 14:18:20.000000000 -0700
 @@ -347,7 +347,7 @@
@@ -1068,7 +1035,7 @@
  				p->read(len,(uint8_t *)&_mainaviheader);
  
 --- a/avidemux/ADM_coreUI/include/DIA_factory.h	2011-11-05 10:15:06.000000000 -0700
-+++ b/avidemux/ADM_coreUI/include/DIA_factory.h	2012-03-17 16:49:42.000000000 -0700
++++ b/avidemux/ADM_coreUI/include/DIA_factory.h	2012-03-17 17:14:59.000000000 -0700
 @@ -201,7 +201,7 @@
    void      enable(uint32_t onoff) ;
    void      finalize(void);
@@ -1083,7 +1050,7 @@
    void      setMe(void *dialog, void *opaque,uint32_t line);
    void      getMe(void);
 -  virtual uint8_t   link(diaMenuEntryDynamic *entry,uint32_t onoff,diaElem *w);
-+  virtual void   link(diaMenuEntryDynamic *entry,uint32_t onoff,diaElem *w);
++  virtual void      link(diaMenuEntryDynamic *entry,uint32_t onoff,diaElem *w);
    virtual void      updateMe(void);
    virtual void      enable(uint32_t onoff) ;
    virtual void      finalize(void);
@@ -1092,7 +1059,7 @@
    void setMe(void *dialog, void *opaque,uint32_t line);
    void getMe(void);
 -  virtual uint8_t   link(diaMenuEntry *entry,uint32_t onoff,diaElem *w);
-+  virtual void   link(diaMenuEntry *entry,uint32_t onoff,diaElem *w);
++  virtual void      link(diaMenuEntry *entry,uint32_t onoff,diaElem *w);
    virtual void      updateMe(void);
    void      enable(uint32_t onoff) ;
    void      finalize(void);;
