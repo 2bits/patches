@@ -1035,7 +1035,7 @@
  				p->read(len,(uint8_t *)&_mainaviheader);
  
 --- a/avidemux/ADM_coreUI/include/DIA_factory.h	2011-11-05 10:15:06.000000000 -0700
-+++ b/avidemux/ADM_coreUI/include/DIA_factory.h	2012-03-17 17:14:59.000000000 -0700
++++ b/avidemux/ADM_coreUI/include/DIA_factory.h	2012-03-17 17:44:16.000000000 -0700
 @@ -201,7 +201,7 @@
    void      enable(uint32_t onoff) ;
    void      finalize(void);
