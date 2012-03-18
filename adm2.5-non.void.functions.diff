@@ -1,0 +1,1127 @@
+--- a/avidemux/ADM_core/include/ADM_clock.h	2008-03-10 09:21:10.000000000 -0700
++++ b/avidemux/ADM_core/include/ADM_clock.h	2012-03-17 11:09:39.000000000 -0700
+@@ -24,7 +24,7 @@
+ 			Clock(void );
+ 			~Clock( );
+ 			uint32_t getElapsedMS( void );
+-			uint8_t reset( void );
++			void reset( void );
+ 
+ 
+ };
+--- a/avidemux/ADM_core/src/TLK_clock.cpp	2008-03-10 14:01:13.000000000 -0700
++++ b/avidemux/ADM_core/src/TLK_clock.cpp	2012-03-17 11:05:30.000000000 -0700
+@@ -98,7 +98,7 @@
+     return (tt&0x7Fffffff);
+ 
+ }
+-uint8_t Clock::reset(void)
++void Clock::reset(void)
+ {
+ 	_startTime=getAbsTime();
+ }
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerEs.h	2007-03-06 23:50:34.000000000 -0800
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerEs.h	2012-03-17 11:16:06.000000000 -0700
+@@ -54,7 +54,7 @@
+                 
+                   uint8_t         sync( uint8_t *stream,uint64_t *abs,uint64_t *r,uint64_t *pts,uint64_t *dts);
+                   uint8_t         syncH264( uint8_t *stream,uint64_t *abs,uint64_t *r,uint64_t *pts,uint64_t *dts);
+-                  uint8_t         getStats(uint64_t *stat) {ADM_assert(0);}
++                  uint8_t         getStats(uint64_t *stat) {ADM_assert(0);return 1;}
+ };      
+         
+ 
+--- a/avidemux/ADM_videoFilter/ADM_vidVobSub.h	2007-08-19 09:01:39.000000000 -0700
++++ b/avidemux/ADM_videoFilter/ADM_vidVobSub.h	2012-03-17 11:21:15.000000000 -0700
+@@ -37,8 +37,8 @@
+         uint16_t                        readword(void);         /// Read a 16 bits word from buffer
+         uint8_t                         forward(uint32_t v);    /// Read a 16 bits word from buffer
+         uint8_t                         decodeRLE(uint32_t off,uint32_t start,uint32_t end);
+-        uint8_t                         setup(void);            /// Rebuild internal info
+-        uint8_t                         cleanup(void);          /// Destroy all internal info
++        void                            setup(void);            /// Rebuild internal info
++        void                            cleanup(void);          /// Destroy all internal info
+         uint8_t                         paletteYUV( void );     /// Convert RGB Pallette to yuv
+         uint8_t                         Palettte2Display( void ); /// Convert the RLE to YUV bitmap
+         uint8_t                         handleSub( uint32_t idx );/// Decode a sub packet
+--- a/avidemux/ADM_videoFilter/ADM_vidVobsub.cpp	2008-06-25 06:18:30.000000000 -0700
++++ b/avidemux/ADM_videoFilter/ADM_vidVobsub.cpp	2012-03-17 11:18:33.000000000 -0700
+@@ -202,7 +202,7 @@
+ 
+ }
+ //************************************
+-uint8_t ADMVideoVobSub::setup(void)
++void ADMVideoVobSub::setup(void)
+ {
+   char *dup;
+   int l;
+@@ -289,7 +289,7 @@
+ 
+ }
+ //*************************************************************
+-uint8_t ADMVideoVobSub::cleanup(void)
++void ADMVideoVobSub::cleanup(void)
+ {
+ 
+         if(_parser) delete _parser;
+--- a/avidemux/ADM_outputs/oplug_ogm/op_ogpage.h	2007-11-21 04:21:10.000000000 -0800
++++ b/avidemux/ADM_outputs/oplug_ogm/op_ogpage.h	2012-03-17 11:25:05.000000000 -0700
+@@ -30,7 +30,7 @@
+ 	
+ 	
+ 	uint32_t	_first;		// first page ?
+-	uint8_t		reset(void);
++	void		reset(void);
+ 	uint8_t		_fresh;		// If =1, this page starts with a fresh packet
+ 	uint64_t	_timestamp;
+ 	uint8_t		_keyFrame;	// if =1 this page starts with a keyframe
+--- a/avidemux/ADM_outputs/oplug_ogm/op_ogpage.cpp	2008-03-06 10:32:32.000000000 -0800
++++ b/avidemux/ADM_outputs/oplug_ogm/op_ogpage.cpp	2012-03-17 11:23:02.000000000 -0700
+@@ -34,7 +34,7 @@
+ #define min(a,b) (a>b)?b:a
+ extern void memcpyswap(uint8_t *dest, uint8_t *src, uint32_t size);
+ //_________________________________________________________
+-uint8_t ogm_page::reset(void)
++void ogm_page::reset(void)
+ {
+ 	_current_lacing=0;
+ 	_current_off=0;
+--- a/avidemux/ADM_codecs/ADM_ffmp43.cpp	2011-06-24 10:43:57.000000000 -0700
++++ b/avidemux/ADM_codecs/ADM_ffmp43.cpp	2012-03-17 11:32:45.000000000 -0700
+@@ -778,7 +778,7 @@
+ 
+ 
+ //***************
+-extern uint8_t  lavformat_init(void);
++extern void     lavformat_init(void);
+ extern void     avcodec_init(void );
+ extern  void    avcodec_register_all(void );
+ extern "C"
+--- a/avidemux/ADM_outputs/ADM_lavformat.cpp	2011-11-16 12:45:48.000000000 -0800
++++ b/avidemux/ADM_outputs/ADM_lavformat.cpp	2012-03-17 11:29:10.000000000 -0700
+@@ -691,7 +691,7 @@
+ 	return 0;
+ }
+ 
+-uint8_t lavformat_init(void)
++void lavformat_init(void)
+ {
+ 	av_register_all();
+ 
+--- a/avidemux/ADM_outputs/ADM_muxts.cpp	2008-04-03 11:19:06.000000000 -0700
++++ b/avidemux/ADM_outputs/ADM_muxts.cpp	2012-03-17 11:43:15.000000000 -0700
+@@ -68,7 +68,7 @@
+ #define PES_BUFFER              1024            // Just to build packet into
+ #define STUFFING_PATTERN        0
+ #define MUX_EVERY_N_AUDIO_FRAMES 5
+-static uint8_t writePts(uint8_t *data,uint64_t ipts,uint32_t flags);
++static void writePts(uint8_t *data,uint64_t ipts,uint32_t flags);
+ // /* ------------------------------------------------------------------------*/write
+ tsMuxer::tsMuxer( void)
+ {
+@@ -345,7 +345,7 @@
+             if((pts>=_curPTS) && (pts<=_curPTS+one)) return 1;
+             if(pts<=_curPTS)
+             {
+-                    printf("tsMuxer:Audio DTS is too low %llu / %llu!\n",pts,_curPTS);
++                    printf("tsMuxer:Audio DTS is too low %llu / %u!\n",pts,_curPTS);
+                     return 1;
+             }
+             return 0;
+@@ -690,7 +690,7 @@
+         flags : PTS only = 2 PTS+DTS=3 DTS=1
+ 
+ */
+-uint8_t writePts(uint8_t *data,uint64_t ipts,uint32_t flags)
++void writePts(uint8_t *data,uint64_t ipts,uint32_t flags)
+ {
+ uint32_t i=0;
+ uint64_t p;
+--- a/avidemux/ADM_inputs/ADM_asf/ADM_asf.cpp	2010-07-18 09:41:58.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_asf/ADM_asf.cpp	2012-03-17 12:46:50.000000000 -0700
+@@ -93,6 +93,7 @@
+     if(trk->extraData) delete [] trk->extraData;
+     trk->extraData=NULL;
+   }
++  return 1;
+ }
+ uint8_t       asfHeader::getExtraHeaderData(uint32_t *len, uint8_t **data)
+ {
+@@ -116,7 +117,7 @@
+   _packet=NULL;
+   _curAudio=NULL;
+   _nbPackets=0;
+-  printf("%u\n",sizeof(_allAudioTracks));
++  printf("%lu\n",sizeof(_allAudioTracks));
+   memset(&(_allAudioTracks[0]),0,sizeof(_allAudioTracks));
+ 
+   _nbAudioTrack=0;
+@@ -194,7 +195,7 @@
+   img->flags=AVI_KEY_FRAME;
+   if(framenum>=_index.size())
+   {
+-    printf("[ASF] Going out of bound %u %u\n",framenum, _index.size());
++    printf("[ASF] Going out of bound %u %lu\n",framenum, _index.size());
+     return 0;
+   }
+   if(!_index[framenum].frameLen)
+@@ -404,12 +405,12 @@
+             printf("Client        :");
+             for(int z=0;z<16;z++) printf(":%02x",s->read8());
+             printf("\n");
+-            printf("File size     : %08lx\n",s->read64());
+-            printf("Creation time : %08lx\n",s->read64());
+-            printf("Number of pack: %08lx\n",s->read64());
+-            printf("Timestamp 1   : %08lx\n",s->read64());
++            printf("File size     : %08llx\n",s->read64());
++            printf("Creation time : %08llx\n",s->read64());
++            printf("Number of pack: %08llx\n",s->read64());
++            printf("Timestamp 1   : %08llx\n",s->read64());
+             _duration=s->read64();
+-            printf("Timestamp 2   : %08lx\n",_duration);
++            printf("Timestamp 2   : %08llx\n",_duration);
+             printf("Timestamp 3   : %04x\n",s->read32());
+             printf("Preload       : %04x\n",s->read32());
+             printf("Flags         : %04x\n",s->read32());
+@@ -450,7 +451,7 @@
+         printf("\nConceal       :");
+         for(int z=0;z<16;z++) printf(":%02x",s->read8());
+         printf("\n");
+-        printf("Reserved    : %08x\n",s->read64());
++        printf("Reserved    : %08lx\n",s->read64());
+         printf("Total Size  : %04x\n",s->read32());
+         printf("Size        : %04x\n",s->read32());
+         sid=s->read16();
+@@ -749,7 +750,7 @@
+   delete aPacket;
+   
+   fseeko(_fd,_dataStartOffset,SEEK_SET);
+-  printf("[ASF] %u images found\n",_index.size());
++  printf("[ASF] %lu images found\n",_index.size());
+   printf("[ASF] ******** End of buildindex *******\n");
+   for(int i=0;i<10;i++)
+         printf("%d %d flags:%x\n",i,_index[i].frameLen,_index[i].flags);
+--- a/avidemux/ADM_inputs/ADM_h263/bitsRead.cpp	2008-06-24 12:46:05.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_h263/bitsRead.cpp	2012-03-17 13:06:34.000000000 -0700
+@@ -150,6 +150,7 @@
+ {
+         UNUSED_ARG(nbBits);
+ 		ADM_assert(0);
++		return 1;
+ }
+ uint8_t	bitsReader::read1bit( void )
+ {
+--- a/avidemux/ADM_inputs/ADM_matroska/ADM_mkv_audio.cpp	2010-08-18 12:03:25.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_matroska/ADM_mkv_audio.cpp	2012-03-17 12:17:21.000000000 -0700
+@@ -67,6 +67,7 @@
+ {
+   *l=_track->extraDataLen;
+   *d=_track->extraData;
++  return 1;
+ }
+ /**
+     \fn getPacket
+@@ -300,10 +301,10 @@
+ 
+   _wavheader=new WAVHeader;
+   memcpy(_wavheader,&(_track->wavHeader),sizeof(WAVHeader));
+-  printf("[MKVAUDIO] found %lu packets\n",track->nbPackets);
+-  printf("[MKVAUDIO] found %lu frames\n",track->nbFrames);
++  printf("[MKVAUDIO] found %u packets\n",track->nbPackets);
++  printf("[MKVAUDIO] found %u frames\n",track->nbFrames);
+   printf("[MKVAUDIO] Default duration %u us\n",_track->_defaultFrameDuration);
+-  printf("[MKVAUDIO] found %lu bytes, %u samples per frame\n",_length,_frameDurationInSample);
++  printf("[MKVAUDIO] found %u bytes, %u samples per frame\n",_length,_frameDurationInSample);
+   _currentLace=_maxLace=0;
+   _clusterParser=NULL;
+   goToCluster(0);
+@@ -412,7 +413,7 @@
+                 return 1;
+               }
+             }
+-            printf("Failed to seek to %u mstime\n");
++            printf("Failed to seek to %u\n", mstime);
+             return 0;
+ #else
+             return 1;
+--- a/avidemux/ADM_inputs/ADM_matroska/ADM_mkv.cpp	2010-08-18 12:03:25.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_matroska/ADM_mkv.cpp	2012-03-17 12:30:21.000000000 -0700
+@@ -155,7 +155,7 @@
+       father.readElemId(&id,&len);
+       if(!ADM_searchMkvTag( (MKV_ELEM_ID)id,&ss,&type))
+       {
+-        printf("[MKV] Tag 0x%x not found (len %llu)\n",id,len);
++        printf("[MKV] Tag 0x%llx not found (len %llu)\n",id,len);
+         father.skip(len);
+         continue;
+       }
+@@ -187,7 +187,7 @@
+       father->readElemId(&id,&len);
+       if(!ADM_searchMkvTag( (MKV_ELEM_ID)id,&ss,&type))
+       {
+-        printf("[MKV] Tag 0x%x not found (len %llu)\n",id,len);
++        printf("[MKV] Tag 0x%llx not found (len %llu)\n",id,len);
+         father->skip(len);
+         continue;
+       }
+@@ -297,6 +297,7 @@
+         *dx=NULL;
+     }
+   }
++  return 1;
+ }
+ /*
+     __________________________________________________________
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_audio.cpp	2008-07-07 10:43:08.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_audio.cpp	2012-03-17 13:13:32.000000000 -0700
+@@ -213,7 +213,7 @@
+     }
+   if(!demuxer->open(realname))
+         {
+-                printf("DMX audio : cannot open %s\n");
++                printf("DMX audio : cannot open %s\n", realname);
+                 
+                 fclose(file);                
+                 return 0;
+@@ -306,8 +306,8 @@
+   demuxer->changePid(_tracks[currentTrack].myPid,_tracks[currentTrack].myPes);
+   demuxer->setPos (0, 0);
+   _pos = 0;
+-  printf ("\n DMX audio initialized (%lu bytes)\n", _length);
+-  printf ("With %lu sync point\n", nbIndex);
++  printf ("\n DMX audio initialized (%u bytes)\n", _length);
++  printf ("With %u sync point\n", nbIndex);
+   int found=-1;
+   // Only take the audio track if it has enough bytes
+   // else we can have a track present in the PMT that is not actually present
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerES.cpp	2008-03-06 10:32:32.000000000 -0800
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerES.cpp	2012-03-17 13:16:15.000000000 -0700
+@@ -57,6 +57,7 @@
+         consumed=0;
+         parser->getpos(&stampAbs);
+         stampAbs-=4;
++        return 1;
+ }
+ uint64_t dmx_demuxerES::elapsed(void)
+ {
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerPS.cpp	2008-03-06 10:32:32.000000000 -0800
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerPS.cpp	2012-03-17 13:21:54.000000000 -0700
+@@ -35,6 +35,7 @@
+         _pesBufferStart=0;  // Big value so that we read
+         _pesBufferLen=0;
+         _pesBufferIndex=0;
++        return 1;
+ }
+ dmx_demuxerPS::dmx_demuxerPS(uint32_t nb,MPEG_TRACK *tracks,uint32_t multi)
+ {
+@@ -166,6 +167,7 @@
+ uint8_t  dmx_demuxerPS::stamp(void)
+ {
+         consumed=0;        
++        return 1;
+ }
+ uint64_t dmx_demuxerPS::elapsed(void)
+ {
+@@ -184,7 +186,7 @@
+ 				{
+ 						if(_pesBufferLen<rel)
+ 							{
+-								printf("Asked setpos to go %lu whereas %lu is max\n",
++								printf("Asked setpos to go %llu whereas %u is max\n",
+ 											rel,_pesBufferLen);
+ 								ADM_assert(rel<_pesBufferLen);
+ 							}
+@@ -207,7 +209,7 @@
+                 
+                 if(rel>_pesBufferLen)
+                 {
+-                        printf("Set pos failed : asked rel:%lu max: %lu, absPos:%llu absPosafterRefill:%llu\n",
++                        printf("Set pos failed : asked rel:%llu max: %u, absPos:%llu absPosafterRefill:%llu\n",
+                                         rel,_pesBufferLen,abs,_pesBufferStart);
+                         ADM_assert(rel<_pesBufferLen);                        
+                 }
+@@ -245,7 +247,7 @@
+                 }
+                 if(!refill())
+                 {
+-                        printf("Refill failed at %d  \n",_pesBufferStart);
++                        printf("Refill failed at %llu  \n",_pesBufferStart);
+                         _lastErr=1;
+                          return 0;
+                 }
+@@ -303,7 +305,7 @@
+ #endif
+                                  if(left>_oldPesLen)
+                                 {
+-                                        printf("Need %lu bytes from previous packet, which len is %lu\n",left,_oldPesLen);
++                                        printf("Need %u bytes from previous packet, which len is %u\n",left,_oldPesLen);
+                                         ADM_assert(0);
+                                 }
+                                 *abs=_oldPesStart;
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_identify.cpp	2008-03-06 10:32:32.000000000 -0800
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_identify.cpp	2012-03-17 13:25:09.000000000 -0700
+@@ -102,19 +102,19 @@
+                 {
+                         if(typePS>MIN_DETECT)
+                         {
+-                                printf("%s looks like Mpeg PS (%lu/%lu)\n",name,typeES,typePS);
++                                printf("%s looks like Mpeg PS (%u/%u)\n",name,typeES,typePS);
+                                 ret=DMX_MPG_PS;
+                         }
+                         else
+                         {
+-                                printf("%s looks like Mpeg ES (%lu/%lu)\n",name,typeES,typePS);
++                                printf("%s looks like Mpeg ES (%u/%u)\n",name,typeES,typePS);
+                                 ret=DMX_MPG_ES;
+                         }
+                 }
+                 else
+                 {
+                         // Try TS here
+-                        printf("Cannot identify %s as mpeg (%lu/%lu)\n",name,typeES,typePS);
++                        printf("Cannot identify %s as mpeg (%u/%u)\n",name,typeES,typePS);
+                         // Try to see if it is H264 ES
+                         if(probeH264(parser))
+                         {                         
+@@ -207,7 +207,7 @@
+                 else
+                 {
+                         // Try TS here
+-                        printf("Cannot identify as H264 ES (%lu/%lu)\n",nal,H264MIN_DETECT);
++                        printf("Cannot identify as H264 ES (%u/%d)\n",nal,H264MIN_DETECT);
+ 
+                 }
+      
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer_h264.cpp	2010-12-15 10:09:25.000000000 -0800
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer_h264.cpp	2012-03-17 13:30:12.000000000 -0700
+@@ -351,7 +351,7 @@
+         // Nb image abs_pos audio seen
+         // The Nb image is used to compute a drift
+         //*******************************************
+-        if(demuxer->hasAudio() & _run->nbTrack>1)
++        if(demuxer->hasAudio() & (_run->nbTrack>1))
+         {
+                 demuxer->getStats(stats);
+                 
+--- a/avidemux/ADM_inputs/ADM_nuv/ADM_nuvAudio.cpp	2008-03-06 10:32:32.000000000 -0800
++++ b/avidemux/ADM_inputs/ADM_nuv/ADM_nuvAudio.cpp	2012-03-17 13:36:32.000000000 -0700
+@@ -88,7 +88,7 @@
+ 		{
+ 			_length+=_index[i]._len;
+ 		}
+-	printf("\n Nuv audio : %lu bytes (%lu chunks)\n",_length,_nb_chunks);
++	printf("\n Nuv audio : %u bytes (%u chunks)\n",_length,_nb_chunks);
+ 	if(hdr)
+ 	 if(fourCC::check(hdr->audio_fourcc,(uint8_t *)"LAME"))
+        {
+@@ -129,7 +129,7 @@
+ 		_current_index++;
+   		if(_current_index>=_nb_chunks)
+     			{
+-                  printf("\n idx : %lu max: %lu len:%lu\n",  _current_index,_nb_chunks,len);
++                  printf("\n idx : %u max: %u len:%u\n",  _current_index,_nb_chunks,len);
+                   //ADM_assert(0);
+                   //pos=0;
+                   return 0;
+@@ -215,7 +215,7 @@
+ 		}
+ 		if (rd != avail)
+ 		  {
+-		      printf("\n Error : Expected :%lu bytes read :%lu \n",     rd, avail);
++		      printf("\n Error : Expected :%u bytes read :%u \n",     rd, avail);
+ 		      //ADM_assert(0);
+ 		      return rd;
+ 
+--- a/avidemux/ADM_inputs/ADM_nuv/ADM_nuv.cpp	2008-06-24 12:46:05.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_nuv/ADM_nuv.cpp	2012-03-17 13:39:12.000000000 -0700
+@@ -472,7 +472,7 @@
+ 
+ 		}
+ 		Dump();
+-		printf("\n Sizeof frame header : %" PRIu64, sizeof(rtframeheader));
++		printf("\n Sizeof frame header : %lu", sizeof(rtframeheader));
+ 		//
+ 		//
+ 		//
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerMSDVR.cpp	2008-07-06 05:54:52.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerMSDVR.cpp	2012-03-17 14:01:17.000000000 -0700
+@@ -37,6 +37,7 @@
+   _pesBufferStart=0;  // Big value so that we read
+   _pesBufferLen=0;
+   _pesBufferIndex=0;
++  return 1;
+ }
+ // ******************************************************
+ dmx_demuxerMSDVR::dmx_demuxerMSDVR(uint32_t nb,MPEG_TRACK *tracks,uint32_t multi)
+@@ -172,11 +173,13 @@
+ uint8_t  dmx_demuxerMSDVR::stamp(void)
+ {
+   consumed=0;        
++  return 1;
+ }
+ // ******************************************************
+ uint64_t dmx_demuxerMSDVR::elapsed(void)
+ {
+   return consumed;        
++  return 1;
+ }
+ // ******************************************************
+ uint8_t  dmx_demuxerMSDVR::getPos( uint64_t *abs,uint64_t *rel)
+@@ -198,7 +201,7 @@
+   {
+     if(_pesBufferLen<rel)
+     {
+-      printf("Asked setpos to go %lu whereas %lu is max\n",
++      printf("Asked setpos to go %lu whereas %u is max\n",
+              rel,_pesBufferLen);
+       ADM_assert(rel<_pesBufferLen);
+     }
+@@ -208,7 +211,7 @@
+   // Seek...
+   if(!PARSER->goToPacket(abs))
+   {
+-    printf("[MSDVR] Seek to %u failed\n",abs); 
++    printf("[MSDVR] Seek to %llu failed\n",abs); 
+   }
+   _pesBufferStart=abs;
+   PARSER->purge(); // just in case
+@@ -220,7 +223,7 @@
+                 
+   if(rel>_pesBufferLen)
+   {
+-    printf("Set pos failed : asked rel:%lu max: %lu, absPos:%llu absPosafterRefill:%llu\n",
++    printf("Set pos failed : asked rel:%lu max: %u, absPos:%llu absPosafterRefill:%llu\n",
+            rel,_pesBufferLen,abs,_pesBufferStart);
+     ADM_assert(rel<_pesBufferLen);                        
+   }
+@@ -258,7 +261,7 @@
+   }
+   if(!refill())
+   {
+-    printf("Refill failed at %d  \n",_pesBufferStart);
++    printf("Refill failed at %llu  \n",_pesBufferStart);
+     _lastErr=1;
+     return 0;
+   }
+@@ -317,7 +320,7 @@
+ #endif
+                                  if(left>_oldPesLen)
+ {
+-  printf("Need %lu bytes from previous packet, which len is %lu\n",left,_oldPesLen);
++  printf("Need %u bytes from previous packet, which len is %u\n",left,_oldPesLen);
+   ADM_assert(0);
+ }
+                                 *abs=_oldPesStart;
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerTS.cpp	2008-10-15 16:19:45.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_demuxerTS.cpp	2012-03-17 14:08:42.000000000 -0700
+@@ -50,6 +50,7 @@
+         _pesBufferStart=0;  // Big value so that we read
+         _pesBufferLen=0;
+         _pesBufferIndex=0;
++        return 1;
+ }
+ dmx_demuxerTS::dmx_demuxerTS(uint32_t nb,MPEG_TRACK *tracks,uint32_t psi,DMX_TYPE muxType)
+ {
+@@ -145,6 +146,7 @@
+ uint8_t  dmx_demuxerTS::stamp(void)
+ {
+         consumed=0;        
++        return 1;
+ }
+ uint64_t dmx_demuxerTS::elapsed(void)
+ {
+@@ -163,7 +165,7 @@
+         {
+                 if(_pesBufferLen<rel)
+                 {
+-                        printf("Asked setpos to go %lu whereas %lu is max\n",
++                        printf("Asked setpos to go %llu whereas %u is max\n",
+                                 rel,_pesBufferLen);
+                         ADM_assert(rel<_pesBufferLen);
+                 }
+@@ -188,7 +190,7 @@
+ 
+         if(rel>_pesBufferLen)
+         {
+-                printf("Set pos failed : asked rel:%lu max: %lu, absPos:%llu absPosafterRefill:%llu\n",
++                printf("Set pos failed : asked rel:%llu max: %u, absPos:%llu absPosafterRefill:%llu\n",
+                                         rel,_pesBufferLen,abs,_pesBufferStart);
+                 ADM_assert(rel<_pesBufferLen);                        
+         }
+@@ -292,7 +294,7 @@
+ #endif
+                                  if(left>_oldPesLen)
+                                 {
+-                                        printf("Need %lu bytes from previous packet, which len is %lu\n",left,_oldPesLen);
++                                        printf("Need %u bytes from previous packet, which len is %u\n",left,_oldPesLen);
+                                         ADM_assert(0);
+                                 }
+                                 *abs=_oldPesStart;
+@@ -390,7 +392,7 @@
+                                 if(packLen<left)
+                                 {
+ #if 1 //def 1  TS_VERBOSE
+-                                        printf("Dropping some bytes : %lu / %lu\n",_pesBufferLen,packLen);
++                                        printf("Dropping some bytes : %u / %u\n",_pesBufferLen,packLen);
+ #endif
+                                          _pesBufferLen=packLen;
+                                 }
+@@ -461,7 +463,7 @@
+ #endif
+         if(consumed>left)
+         {
+-                printf("Wrong PES header at %"LLX" %lu / %lu\n",abs,consumed,left);
++                printf("Wrong PES header at %"LLX" %u / %u\n",abs,consumed,left);
+                 goto _againBranch;
+         }
+         
+@@ -612,7 +614,7 @@
+                 left--;
+                 if(val>=left)
+                 {
+-                 printf("Wrong adaptation layer size at %"LLX" size=%lu, bytes left = %lu pid=%lx\n",abs,val,left,pid);
++                 printf("Wrong adaptation layer size at %"LLX" size=%lu, bytes left = %u pid=%x\n",abs,val,left,pid);
+                  goto _again; // need to search..
+                 }
+                 parser->forward(val); // skip adaptation field
+@@ -840,7 +842,7 @@
+ #endif
+                                  if(left>_oldPesLen)
+                                 {
+-                                        printf("Need %lu bytes from previous packet, which len is %lu\n",left,_oldPesLen);
++                                        printf("Need %u bytes from previous packet, which len is %u\n",left,_oldPesLen);
+                                         ADM_assert(0);
+                                 }
+                                 *abs=_oldPesStart;
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer.cpp	2010-08-15 00:31:54.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer.cpp	2012-03-17 14:15:48.000000000 -0700
+@@ -275,7 +275,7 @@
+         err*=100;
+         err/=run.imageFPS*2;
+         if(err<0) err=-err;
+-        printf("%lu :%lu / %lu , %f\n",run.imageFPS,run.imageFPS*2,compfps,err);
++        printf("%u :%u / %u , %f\n",run.imageFPS,run.imageFPS*2,compfps,err);
+ 
+         if(err<10) 
+         {
+@@ -318,9 +318,9 @@
+         delete work;  
+ 
+         printf("*********Indexing stopped***********\n");
+-        printf("Found       :%lu gop\n",run.nbGop);
+-        printf("Found       :%lu image\n",run.nbImage);                
+-        printf("Average fps :%lu /1000 fps\n",compfps);
++        printf("Found       :%u gop\n",run.nbGop);
++        printf("Found       :%u image\n",run.nbImage);                
++        printf("Average fps :%u /1000 fps\n",compfps);
+ 
+           delete demuxer;
+           delete [] realname;
+@@ -350,7 +350,7 @@
+         PRINT(last,l);
+         
+ #endif
+-        printf("Time difference:%lu s\n",result/1000);
++        printf("Time difference:%u s\n",result/1000);
+         return result;
+ 
+ }
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer_mpeg2.cpp	2008-09-13 09:27:58.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_indexer_mpeg2.cpp	2012-03-17 14:18:20.000000000 -0700
+@@ -347,7 +347,7 @@
+         // Nb image abs_pos audio seen
+         // The Nb image is used to compute a drift
+         //*******************************************
+-        if(demuxer->hasAudio() & _run->nbTrack>1)
++        if(demuxer->hasAudio() & (_run->nbTrack>1))
+         {
+                 demuxer->getStats(stats);
+                 
+--- a/avidemux/ADM_inputs/ADM_ogm/ADM_ogmAudio.cpp	2008-06-24 12:46:05.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_ogm/ADM_ogmAudio.cpp	2012-03-17 14:54:09.000000000 -0700
+@@ -95,13 +95,13 @@
+ 		tmp2=new uint8_t[64*1024];
+ 	
+ 		readPacket(&size,tmp,&flags,&f);
+-		printf("1st header of %lu bytes stored as extra data (%lx flags)\n",size,flags);
++		printf("1st header of %u bytes stored as extra data (%x flags)\n",size,flags);
+ 	
+ 		readPacket(&size1,tmp1,&flags,&f);
+-		printf("Comment follow (%lx as flags)\n",flags);
++		printf("Comment follow (%x as flags)\n",flags);
+ 	
+ 		readPacket(&size2,tmp2,&flags,&f);
+-		printf("cook book follow (%lx as flags)\n",flags);
++		printf("cook book follow (%x as flags)\n",flags);
+ 	
+ 		// 
+ 		// We need all 3 packets to properly initialize it
+@@ -233,7 +233,7 @@
+ 	lenbyte=1+lenbyte;
+ 	if(ssize<lenbyte)
+ 	{
+-		printf("Oops:ssize %lu, lenbyte %d\n",ssize,lenbyte);
++		printf("Oops:ssize %u, lenbyte %d\n",ssize,lenbyte);
+ 		return 0;
+ 		
+ 	}
+@@ -388,7 +388,7 @@
+ 			return 1;
+ 	}
+ 	//
+-	printf("Goto :%lu, max :%lu\n",val,idx[_currentTrack->nbAudioPacket].sampleCount);
++	printf("Goto :%"PRIu64", max :%"PRIu64"\n",val,idx[_currentTrack->nbAudioPacket].sampleCount);
+ 	for(uint32_t i=0;i<_currentTrack->nbAudioPacket;i++)
+ 	{		
+ 		cur=idx[i].sampleCount;
+@@ -424,7 +424,7 @@
+ 		}
+ 		aprintf("%lu: Current %llu target %llu\n",i,idx[i].sampleCount,val);		
+ 	}
+-	printf("**Failed to seek to %lu ms!**\n",mstime);
++	printf("**Failed to seek to %u ms!**\n",mstime);
+ 	return 0;
+ 
+ }
+--- a/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_video.cpp	2010-06-27 01:45:15.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_mpegdemuxer/dmx_video.cpp	2012-03-17 14:58:51.000000000 -0700
+@@ -289,8 +289,8 @@
+ 
+                 printf("For file :%s\n",realname);                
+                 printf("Pic      :%dx%d, %d fps\n",w,h,fps);
+-                printf("#Gop     :%lu\n",_nbGop);
+-                printf("#Img     :%lu\n",_nbFrames);
++                printf("#Gop     :%u\n",_nbGop);
++                printf("#Img     :%u\n",_nbFrames);
+ 
+                 
+                 switch(type)
+@@ -586,7 +586,7 @@
+          
+         for(uint32_t i=0;i<50;i++)
+         {
+-                printf("%d : %c S:%x A:%x R:%x\n",i,_index[i].type,_index[i].size,_index[i].absolute,_index[i].relative);
++                printf("%d : %c S:%x A:%"PRIu64" R:%x\n",i,_index[i].type,_index[i].size,_index[i].absolute,_index[i].relative);
+ 
+         }
+ 
+--- a/avidemux/ADM_inputs/ADM_ogm/ADM_ogm.cpp	2008-06-24 12:46:05.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_ogm/ADM_ogm.cpp	2012-03-17 15:07:21.000000000 -0700
+@@ -516,7 +516,7 @@
+ 	
+ 	delete work;
+ 	*nb=frame;
+-	printf("\n Found %lu Frame\n",frame);
++	printf("\n Found %u Frame\n",frame);
+ 	if(!frame) return 0;
+ 
+ 	// shrink index
+@@ -540,7 +540,7 @@
+ 			(sizeof(OgAudioIndex)*track2->nbAudioPacket)>>20);
+ 	
+ 	
+-	printf("Audio track1: %lu bytes seen, Audio Track2 : %lu bytes seen\n",
++	printf("Audio track1: %u bytes seen, Audio Track2 : %u bytes seen\n",
+ 		track1->trackSize,track2->trackSize);	
+ 	delete [] _index;
+ 	_index=tmp;
+@@ -577,7 +577,7 @@
+ 		_demux->getLace(&frag,&frags);
+ 		if(_lastFrag>=frag)
+ 		{
+-			printf("\n Either end of stream or a bug... %lu %lu \n",_lastFrag,_lastImage);
++			printf("\n Either end of stream or a bug... %u %u \n",_lastFrag,_lastImage);
+ 			_lastImage=0xfffffff;
+ 			_lastFrag=0xfffff;
+ 			return 0;
+@@ -600,9 +600,9 @@
+ 			}
+ 			if(len<cursize)
+ 			{
+-			printf("Len inconsistency : We still have %lu bytes to read and encountered a %lu lace\n",
++			printf("Len inconsistency : We still have %u bytes to read and encountered a %u lace\n",
+ 				len,cursize);
+-				printf("The total frame len is %lu, frame number is %lu, findex=%lu,\n",
++				printf("The total frame len is %u, frame number is %u, findex=%u,\n",
+ 					img->dataLength,framenum,findex);
+ 				ADM_assert(0);
+ 			
+@@ -628,10 +628,10 @@
+ 				else
+ 				{
+ 					printf("\n Short Inconsistency : When requesting frame "
+-					"%lu we got len to go %lu and reached a new frame, lastFrag=%lu/%u\n",
++					"%u we got len to go %u and reached a new frame, lastFrag=%u/%u\n",
+ 										framenum,len,_lastFrag,frag);
+ 										
+-					printf("For information the frame len is %lu, findex=%lu\n",img->dataLength,findex);
++					printf("For information the frame len is %u, findex=%u\n",img->dataLength,findex);
+ 					ADM_assert(0);
+ 				}
+ 
+@@ -697,7 +697,7 @@
+ 
+ 			if(seek>findex)
+ 			{
+-				printf("\n When requesting frame %lu we got len to go %lu and reached a new frame, lastFrag=%lu/%u\n",
++				printf("\n When requesting frame %u we got len to go %u and reached a new frame, lastFrag=%u/%u\n",
+ 										framenum,len,_lastFrag,frag);
+ 				ADM_assert(0);
+ 			}
+@@ -715,9 +715,9 @@
+ 				}
+ 				else if(seek==findex)
+ 				{
+-					printf("\n Inconsistency3 : When requesting frame %lu we got len to go %lu and reached a new frame, lastFrag=%lu/%u\n",
++					printf("\n Inconsistency3 : When requesting frame %u we got len to go %u and reached a new frame, lastFrag=%u/%u\n",
+ 										framenum,len,_lastFrag,frag);
+-					printf("For information the frame len is %lu findex=%lu\n",img->dataLength,findex);
++					printf("For information the frame len is %u findex=%u\n",img->dataLength,findex);
+ 					ADM_assert(0);
+ 				}
+ 				seek++;
+@@ -743,15 +743,15 @@
+ 	printf("header size : %d\n",header->size);
+ 	printf("Time unit   : %llu\n",header->time_unit);
+ 	printf("sample unit : %llu\n",header->samples_per_unit);
+-	printf("Default len : %llu\n",header->default_len);
+-	printf("Buffer size : %llu\n",header->buffersize);
+-	printf("Bits per sam: %llu\n",header->bits_per_sample);
++	printf("Default len : %u\n",  header->default_len);
++	printf("Buffer size : %u\n",  header->buffersize);
++	printf("Bits per sam: %u\n",  header->bits_per_sample);
+ 
+ 	if(isaudio)
+ 	{
+-			printf("Channels        : %llu\n",header->audio.channels);
+-			printf("Blockalign      : %llu\n",header->audio.blockalign);
+-			printf("Avgbytespersec  : %llu\n",header->audio.avgbytespersec);
++			printf("Channels        : %u\n",header->audio.channels);
++			printf("Blockalign      : %u\n",header->audio.blockalign);
++			printf("Avgbytespersec  : %u\n",header->audio.avgbytespersec);
+ 	
+ 	
+ 	}	
+--- a/avidemux/ADM_inputs/ADM_ogm/ADM_ogmpages.cpp	2008-06-24 12:46:05.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_ogm/ADM_ogmpages.cpp	2012-03-17 15:10:21.000000000 -0700
+@@ -118,7 +118,7 @@
+ 
+ 		if(!fourCC::check(_page.sig,(uint8_t *)"OggS"))
+ 		{
+-			printf("Bad at offset :%lu 0x %x\n",_hdrpos,_hdrpos);
++			printf("Bad at offset :%"PRIu64" 0x %"PRIu64"\n",_hdrpos,_hdrpos);
+ 			ADM_assert(0);
+ 		}
+ 		*id=fourCC::get(_page.serial);
+@@ -197,7 +197,7 @@
+ 
+ 		if(size>_payload)
+ 		{
+-			printf("Oops: %lu size, %lu payload\n",size,_payload);
++			printf("Oops: %u size, %u payload\n",size,_payload);
+ 			exit(0);
+ 		
+ 		}
+--- a/avidemux/ADM_inputs/ADM_openDML/ADM_odml_audio.cpp	2008-03-06 10:32:32.000000000 -0800
++++ b/avidemux/ADM_inputs/ADM_openDML/ADM_odml_audio.cpp	2012-03-17 15:13:13.000000000 -0700
+@@ -62,7 +62,7 @@
+     _extraData=extraData;
+     if(_extraLen)
+     	{
+-		printf(" we have %lu bytes of extra data in wavheader\n",_extraLen);
++		printf(" we have %u bytes of extra data in wavheader\n",_extraLen);
+ 	}
+     _pos=0;
+     _index=idx;
+@@ -90,7 +90,7 @@
+         	_length+=_index[i].size;
+        }
+ 	
+-    printf("\n Total audio length : %lu",_length);
++    printf("\n Total audio length : %u",_length);
+ }
+ //#define VERBOSE_L3
+ uint8_t	AVDMAviAudioStream::getPacket(uint8_t *dest, uint32_t *len, uint32_t *samples)
+@@ -185,7 +185,7 @@
+ 		rd = fread(buffer,1,avail,_fd);
+ 		if (rd != avail)
+ 		  {
+-		      printf("\n Error : Expected :%lu bytes read :%lu \n",     rd, avail);
++		      printf("\n Error : Expected :%u bytes read :%u \n",     rd, avail);
+ 		      ADM_assert(0);
+ 
+ 		  }
+@@ -195,7 +195,7 @@
+ 		_current_index++;
+ 		if (togo && _current_index>=_nb_chunks)
+ 		      {
+-                                printf("\n OVR: %lu rel:%lu lentogo:%lu blocklen %lu", _abs_position,
++                                printf("\n OVR: %llu rel:%u lentogo:%u blocklen %llu", _abs_position,
+ 	               	               _rel_position, togo,_index[_current_index].size);
+                                printf("Grabbed :%u\n",len-togo);
+                                ADM_assert(len>=togo);
+@@ -245,7 +245,7 @@
+ 		_current_index++;
+   		if(_current_index>=_nb_chunks)
+     			{
+-                  printf("\n idx : %lu max: %lu len:%lu\n",  _current_index,_nb_chunks,len);
++                  printf("\n idx : %u max: %u len:%u\n",  _current_index,_nb_chunks,len);
+ 		  _current_index=0;
+                   //ADM_assert(0);
+                   //pos=0;
+--- a/avidemux/ADM_inputs/ADM_openDML/ADM_openDMLDepack.cpp	2009-09-16 10:36:23.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_openDML/ADM_openDMLDepack.cpp	2012-03-17 15:15:36.000000000 -0700
+@@ -85,7 +85,7 @@
+ 		working->update(img,nbFrame);
+ 		if(!getFrameNoAlloc(img,&image))
+ 			{
+-				printf("Error could not get frame %lu\n",img);
++				printf("Error could not get frame %u\n",img);
+ 				goto _abortUnpack;
+ 			}
+ 		aprintf("--Frame:%lu/%lu, len %lu, nbDuped%u\n",img,nbFrame,image.dataLength,nbDuped);
+@@ -200,7 +200,7 @@
+ 		delete [] newIndex;
+ 		printf("Could not unpack this...\n");
+ 	}
+-	printf("Initial # of images : %lu, now we have %lu \n",nbFrame,targetIndex);
++	printf("Initial # of images : %u, now we have %u \n",nbFrame,targetIndex);
+ 	nbFrame=targetIndex;
+ 	
+ 	setpriority(PRIO_PROCESS, 0, originalPriority);
+--- a/avidemux/ADM_inputs/ADM_flv/ADM_flv.cpp	2011-11-01 23:27:33.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_flv/ADM_flv.cpp	2012-03-17 15:25:31.000000000 -0700
+@@ -269,7 +269,7 @@
+         }
+         else    
+         {
+-            printf("[FLV] found some extradata %lu\n",r);
++            printf("[FLV] found some extradata %d\n",r);
+             trk->extraData=new uint8_t[r];
+             trk->extraDataLen=r;
+             read(r,trk->extraData);
+@@ -465,7 +465,7 @@
+ bool flvHeader::updateDimensionWithMeta(uint32_t codec)
+ {
+     if(codec==0xFFFF) return false;
+-    printf("We got metadata : %d x %d\n",(int)metaWidth,(int)metaHeight,(int)codec);
++    printf("We got metadata: %d x %d  with codec: %u\n",(int)metaWidth,(int)metaHeight,codec);
+     if( metaWidth && metaHeight )
+     {
+         switch(codec)
+@@ -667,6 +667,7 @@
+   videoTrack=NULL;
+   audioTrack=NULL;
+   _audioStream=NULL;
++  return 1;
+ }
+ /*
+     __________________________________________________________
+--- a/avidemux/ADM_inputs/ADM_openDML/ADM_opendml_reorder.cpp	2008-04-03 11:19:06.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_openDML/ADM_opendml_reorder.cpp	2012-03-17 15:29:24.000000000 -0700
+@@ -46,5 +46,5 @@
+ #undef INDEX_TMPL       
+ #undef INDEX_ARRAY_TMPL 
+ #undef FRAMETYPE_TMPL   
+-             
++    return 1;
+ }
+--- a/avidemux/ADM_inputs/ADM_openDML/ADM_openDML.cpp	2010-06-10 12:35:35.000000000 -0700
++++ b/avidemux/ADM_inputs/ADM_openDML/ADM_openDML.cpp	2012-03-17 16:07:25.000000000 -0700
+@@ -206,7 +206,7 @@
+ 		if(MKFCC('R','I','F','F')!=(rd=parser->read32()))
+ 			{
+ 				printf("Not riff\n");badAvi=1;
+-				printf("%lx != %lx\n",rd,MKFCC('R','I','F','F'));
++				printf("%x != %d\n",rd,MKFCC('R','I','F','F'));
+ 			}
+ 		parser->read32();
+ 		if(MKFCC('A','V','I',' ')!=parser->read32())
+@@ -264,7 +264,7 @@
+ 			if(_Tracks[i].strh.size!=sizeof(_videostream))
+ 			{
+ 				printf("Mmm(1) we have a bogey here, size mismatch : %"LLU"\n",_Tracks[i].strh.size);
+-				printf("expected %d\n",sizeof(_videostream));
++				printf("expected %lu\n",sizeof(_videostream));
+ 				if(_Tracks[i].strh.size<sizeof(_videostream)-8) // RECT is not mandatory
+ 				{
+                                   GUI_Error_HIG(QT_TR_NOOP("Malformed header"), NULL);
+@@ -279,7 +279,7 @@
+ 			if(_videostream.fccType==MKFCC('v','i','d','s'))
+ 				{
+ 					vidTrack=i;
+-					printf("Video track is %ld\n",i);
++					printf("Video track is %u\n",i);
+ 					break;
+ 				}		
+ 		}
+@@ -305,7 +305,7 @@
+ 		extra=_Tracks[vidTrack].strf.size-sizeof(_video_bih);
+ 		if(extra<0)
+ 		{	
+-			printf("bih is not big enough (%lu/%lu)!\n",_Tracks[vidTrack].strf.size,sizeof(_video_bih));
++			printf("bih is not big enough (%llu/%lu)!\n",_Tracks[vidTrack].strf.size,sizeof(_video_bih));
+ 			return 0;
+ 		}
+ 		fread(&_video_bih,sizeof(_video_bih),1,_fd);
+@@ -346,7 +346,7 @@
+                                         if(_Tracks[run].strh.size != sizeof(_audiostream))
+                                         {
+                                                 printf("Mmm(2) we have a bogey here, size mismatch : %"LLU"\n",_Tracks[run].strh.size);
+-                                                printf("expected %d\n",sizeof(_audiostream));
++                                                printf("expected %lu\n",sizeof(_audiostream));
+                                                 if(_Tracks[run].strh.size<sizeof(_audiostream)-8)
+                                                 {
+                                                   GUI_Error_HIG(QT_TR_NOOP("Malformed header"), NULL);
+@@ -369,7 +369,7 @@
+                                         extra=_Tracks[run].strf.size-sizeof(WAVHeader);
+                                         if(extra<0)
+                                         {	
+-                                                printf("WavHeader is not big enough (%lu/%lu)!\n",
++                                                printf("WavHeader is not big enough (%llu/%lu)!\n",
+                                                 _Tracks[run].strf.size,sizeof(WAVHeader));
+                                                 return 0;
+                                         }
+@@ -512,7 +512,7 @@
+ 			{
+ 				
+ 				printf("Mmm(3) we have a bogey here, size mismatch : %"LLU"\n",_Tracks[i].strh.size);
+-				printf("expected %d\n",sizeof(tmp));
++				printf("expected %lu\n",sizeof(tmp));
+ 				if(_Tracks[i].strh.size<sizeof(tmp)-8)
+ 				{
+                                   GUI_Error_HIG(QT_TR_NOOP("Malformed header"), NULL);
+@@ -529,18 +529,18 @@
+ 			if(tmp.fccType==MKFCC('a','u','d','s'))
+ 				{
+ 					count++;
+-					printf("Track %lu/%lu is audio\n",i,_nbTrack);	
++					printf("Track %u/%u is audio\n",i,_nbTrack);	
+ 				}
+ 			else
+ 			{
+                                 if(tmp.fccType==MKFCC('v','i','d','s') && tmp.fccHandler==MKFCC('D','X','S','B'))
+                                 {
+ 
+-                                        printf("Track %lu/%lu is subs\n",i,_nbTrack);  
++                                        printf("Track %u/%u is subs\n",i,_nbTrack);  
+                                 }
+                                 else
+                                 {
+-                                        printf("Track %lu/%lu :\n",i,_nbTrack);
++                                        printf("Track %u/%u :\n",i,_nbTrack);
+                                         fourCC::print(tmp.fccType);
+                                         fourCC::print(tmp.fccHandler);
+                                         printf("\n");
+@@ -561,7 +561,7 @@
+         printf(  "Main header\n" );
+         printf(  "______________________\n" );  
+ 
+-#define X_DUMP(x) printf(#x":\t\t:%ld\n",_mainaviheader.x);
++#define X_DUMP(x) printf(#x":\t\t:%d\n",_mainaviheader.x);
+     	X_DUMP(dwStreams);
+     	X_DUMP(dwMicroSecPerFrame) ;
+ 	X_DUMP(dwMaxBytesPerSec);
+@@ -573,7 +573,7 @@
+     	X_DUMP(dwHeight);
+  	printf("\n");
+ #undef X_DUMP
+-#define X_DUMP(x) printf("\n "#x":\t\t:%ld",_videostream.x);
++#define X_DUMP(x) printf("\n "#x":\t\t:%d",_videostream.x);
+ 
+ 				
+ 	printf(  "video stream attached:\n" );
+@@ -609,7 +609,7 @@
+         for(int i=0;i<_nbAudioTracks;i++)
+      	{
+ #undef X_DUMP
+-#define X_DUMP(x) printf("\n "#x":\t\t:%ld",_audioTracks[i].avistream->x);
++#define X_DUMP(x) printf("\n "#x":\t\t:%d",_audioTracks[i].avistream->x);
+ 
+ 
+ 
+@@ -621,7 +621,7 @@
+ 	  fourCC::print(_audioTracks[i].avistream->fccType);
+ 	  printf("\n fccHandler :");
+ 	  fourCC::print(_audioTracks[i].avistream->fccHandler);
+-	  printf("\n fccHandler :0x%lx", _audioTracks[i].avistream->fccHandler);
++	  printf("\n fccHandler :0x%x", _audioTracks[i].avistream->fccHandler);
+ 
+ 
+ 	  X_DUMP(dwFlags);
+@@ -639,7 +639,7 @@
+ #undef X_DUMP
+ 
+         printWavHeader(_audioTracks[i].wavHeader);
+-        printf(" Extra Data  : %ld\n",_audioTracks[i].extraDataLen);
++        printf(" Extra Data  : %u\n",_audioTracks[i].extraDataLen);
+ 	if(_audioTracks[i].extraDataLen)
+ 	{
+ 		mixDump( _audioTracks[i].extraData, _audioTracks[i].extraDataLen);
+@@ -675,7 +675,7 @@
+ 				aprintf("main header found \n");
+ 				if(len!=sizeof(_mainaviheader))
+ 				{
+-					printf("oops : %d / %d\n",len,sizeof(_mainaviheader));
++					printf("oops : %d / %lu\n",len,sizeof(_mainaviheader));
+ 				}
+ 				p->read(len,(uint8_t *)&_mainaviheader);
+ 
+--- a/avidemux/ADM_coreUI/include/DIA_factory.h	2011-11-05 10:15:06.000000000 -0700
++++ b/avidemux/ADM_coreUI/include/DIA_factory.h	2012-03-17 16:49:42.000000000 -0700
+@@ -201,7 +201,7 @@
+   void      enable(uint32_t onoff) ;
+   void      finalize(void);
+   void      updateMe();
+-  uint8_t   link(uint32_t onoff,diaElem *w);
++  void      link(uint32_t onoff,diaElem *w);
+   int getRequiredLayout(void);
+ };
+ /*********************************************/
+@@ -376,7 +376,7 @@
+   virtual   ~diaElemMenuDynamic() ;
+   void      setMe(void *dialog, void *opaque,uint32_t line);
+   void      getMe(void);
+-  virtual uint8_t   link(diaMenuEntryDynamic *entry,uint32_t onoff,diaElem *w);
++  virtual void   link(diaMenuEntryDynamic *entry,uint32_t onoff,diaElem *w);
+   virtual void      updateMe(void);
+   virtual void      enable(uint32_t onoff) ;
+   virtual void      finalize(void);
+@@ -407,7 +407,7 @@
+   virtual ~diaElemMenu() ;
+   void setMe(void *dialog, void *opaque,uint32_t line);
+   void getMe(void);
+-  virtual uint8_t   link(diaMenuEntry *entry,uint32_t onoff,diaElem *w);
++  virtual void   link(diaMenuEntry *entry,uint32_t onoff,diaElem *w);
+   virtual void      updateMe(void);
+   void      enable(uint32_t onoff) ;
+   void      finalize(void);;
+--- a/avidemux/ADM_coreUI/src/DIA_factory.cpp	2010-04-06 12:22:30.000000000 -0700
++++ b/avidemux/ADM_coreUI/src/DIA_factory.cpp	2012-03-17 16:53:39.000000000 -0700
+@@ -260,7 +260,7 @@
+ 		ADM_assert(internalPointer); 
+ 		internalPointer->enable(onoff); 
+ 	}
+-uint8_t   diaElemMenu::link(diaMenuEntry *entry,uint32_t onoff,diaElem *w)
++void      diaElemMenu::link(diaMenuEntry *entry,uint32_t onoff,diaElem *w)
+ {
+ 	diaElemMenuBase *cast=(diaElemMenuBase *)internalPointer;
+ 	cast->link(entry,onoff,w);
+@@ -290,7 +290,7 @@
+ 		ADM_assert(internalPointer); 
+ 		internalPointer->enable(onoff); 
+ 	}
+-uint8_t   diaElemMenuDynamic::link(diaMenuEntryDynamic *entry,uint32_t onoff,diaElem *w)
++void      diaElemMenuDynamic::link(diaMenuEntryDynamic *entry,uint32_t onoff,diaElem *w)
+ {
+ 	diaElemMenuDynamicBase *cast=(diaElemMenuDynamicBase *)internalPointer;
+ 	cast->link(entry,onoff,w);
+@@ -502,7 +502,7 @@
+ 		ADM_assert(internalPointer); 
+ 		internalPointer->enable(onoff); 
+ 	}
+-uint8_t   diaElemToggle::link(uint32_t onoff,diaElem *w)
++void      diaElemToggle::link(uint32_t onoff,diaElem *w)
+ {
+ 	diaElemToggleBase *cast=(diaElemToggleBase *)internalPointer;
+ 			cast->link(onoff,w);	

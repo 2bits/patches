@@ -1,0 +1,11 @@
+--- a/avidemux/ADM_core/src/ADM_memsupport.cpp	2009-12-19 15:28:29.000000000 -0800
++++ b/avidemux/ADM_core/src/ADM_memsupport.cpp	2012-03-16 23:16:07.000000000 -0700
+@@ -60,7 +60,7 @@
+ void ADM_memStat(void)
+ {
+ 	printf("Global mem stat\n______________\n");
+-	printf("\tMemory consumed: %lu (MB)\n", ADM_consumed >> 20);
++	printf("\tMemory consumed: %u (MB)\n", ADM_consumed >> 20);
+ }
+ 
+ #if !defined(ADM_DEBUG) || !defined(FIND_LEAKS)
