@@ -1,0 +1,14 @@
+--- a/cmake/admAsNeeded.cmake	2012-03-18 00:09:33.000000000 -0700
++++ b/cmake/admAsNeeded.cmake	2012-03-18 00:12:04.000000000 -0700
+@@ -7,9 +7,9 @@
+ MACRO(ADM_ADD_SHARED_LIBRARY name )
+         ADD_LIBRARY(${name} SHARED ${ARGN})
+ 	AS_NEEDED(${name})
+-        if(UNIX)
++        if(UNIX AND NOT APPLE)
+         	TARGET_LINK_LIBRARIES( ${name} "-Wl,-z,defs")
+-        endif(UNIX)
++        endif(UNIX AND NOT APPLE)
+ 
+ ENDMACRO(ADM_ADD_SHARED_LIBRARY name )
+ 
