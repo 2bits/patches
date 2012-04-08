@@ -1,0 +1,11 @@
+--- a/avidemux/ADM_core/include/ADM_mangle.h    2011-12-28 16:32:37.000000000 -0800
++++ b/avidemux/ADM_core/include/ADM_mangle.h    2012-04-07 10:49:11.000000000 -0700
+@@ -26,7 +26,7 @@
+ #    else
+ #        define MANGLE(a) "_" #a
+ #        define FUNNY_MANGLE(x) __attribute__((used)) x asm(MANGLE(x))
+-#        define FUNNY_MANGLE_ARRAY(x, y) x[y] asm(MANGLE(x))
++#        define FUNNY_MANGLE_ARRAY(x, y) __attribute__((used)) x[y] asm(MANGLE(x))
+ #    endif
+ #else
+ #    if defined(ADM_CPU_X86_64) && defined(PIC)
