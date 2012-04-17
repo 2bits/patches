@@ -1,0 +1,9 @@
+--- a/avidemux/common/ADM_render/GUI_sdlRenderHelper.m	2012-04-16 21:24:30.000000000 -0700
++++ b/avidemux/common/ADM_render/GUI_sdlRenderHelper.m	2012-04-16 21:35:15.000000000 -0700
+@@ -1,5 +1,6 @@
+ #import <Cocoa/Cocoa.h>
+ #import <Carbon/Carbon.h>
++#import <AppKit/AppKit.h>
+ 
+ static NSWindow* nsParentWindow = nil;
+ static NSWindow* nsWindow = nil;
